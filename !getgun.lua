@@ -1,9 +1,23 @@
+--Больше скриптов от автора можно найти на сайте: http://www.rubbishman.ru/samp
+--------------------------------------------------------------------------------
+-------------------------------------META---------------------------------------
+--------------------------------------------------------------------------------
 script_name("GETGUN")
 script_description("/gg")
 script_author("rubbishman")
-script_version("1.21")
+script_version("1.3")
+--------------------------------------VAR---------------------------------------
 color = 0x348cb2
-local LIP = {};
+local inicfg = require 'inicfg'
+local data = inicfg.load({
+	options =
+	{
+		startmessage = 1,
+		hotkey = 'N',
+		mode = 0,
+		autoupdate = 1,
+	},
+}, 'getgun.ini')
 local dlstatus = require('moonloader').download_status
 local mod_submenus_sa = {
 	{
@@ -52,6 +66,17 @@ local mod_submenus_sa = {
 					cmdInform()
 				end
 			},
+			{
+				title = 'Вкл/выкл автообновление',
+				onclick = function()
+					if settings.options.autoupdate == 1 then
+						settings.options.autoupdate = 0 sampAddChatMessage(('[GETGUN]: Автообновление выключено'), color)
+					else
+						settings.options.autoupdate = 1 sampAddChatMessage(('[GETGUN]: Автообновление включено'), color)
+					end
+					inicfg.save(data, "getgun")
+				end
+			},
 		}
 	},
 	{
@@ -82,151 +107,125 @@ function remoteskladcontrol()
 			data.options.mode = 1
 			sampAddChatMessage('Режим складосохранения активирован.', color)
 			sampSendChat("/f 10-4 OGUREC, инструкции выполнены.")
-			LIP.save('moonloader\\config\\getgun.ini', data)
+			inicfg.save(data, "getgun")
 		end
 		if text9 == " Президент  James_Bond:  Деактивировать режим складосохранения! Код деактивации: BANAN!" and color9 == -16646913 then
 			wait(1000)
 			data.options.mode = 0
 			sampAddChatMessage('Режим складосохранения деактивирован.', color)
 			sampSendChat("/f 10-4 BANAN, инструкции выполнены.")
-			LIP.save('moonloader\\config\\getgun.ini', data)
+			inicfg.save(data, "getgun")
 		end
 	end
 end
 function main()
 	while not isSampAvailable() do wait(100) end
-	lua_thread.create(checkversion)
-	while goplay == 0 or goplay == 2 do wait(2000) end
+	if data.options.autoupdate == 1 then
+		update()
+		while update ~= false do wait(100) end
+	end
 	firstload()
 	onload()
-	local names = {
-		["Phil_Coulson"] = "friend",
-		["Set_Johnson"] = "friend",
-		["James_Bond"] = "friend",
-		["Vittore_Deltoro"] = "friend",
-		["Alan_Morgan"] = "friend",
-		["Francesco_Garsia"] = "friend",
-		["Alex_Rein"] = "friend",
-		["Chester_Phillips"] = "friend",
-		["Alejandro_Sauce"] = "friend",
-		["Quentin_Buratino"] = "friend",
-		["Jax_Teller"] = "friend",
-		["Daniel_Defo"] = "friend",
-		["Christopher_Star"] = "friend",
-		["Mike_Rein"] = "friend",
-		["Igor_Strelkov"] = "friend",
-		["Andres_Clemente"] = "friend",
-		["Dwight_Forester"] = "friend",
-		["Andrew_Soprano"] = "friend",
-		["Leonardo_Soprano"] = "friend",
-		["Nicholas_Morrison"] = "friend",
-	}
-	if names[licensenick] == "friend" and (sampGetCurrentServerAddress() == '185.169.134.11' or sampGetCurrentServerAddress() == '185.169.134.19') then
-		if data.options.startmessage == 1 then
-			sampAddChatMessage(('GETGUN v'..thisScript().version..' запущен. Автор: James_Bond/rubbishman/Coulson.'),
-			0x348cb2)
-			sampAddChatMessage(('Подробнее - /gg. Отключить это сообщение - /ggnot'), 0x348cb2)
-			sampAddChatMessage(('Лицензия принадлежит: '..licensenick),
-			0x348cb2)
-		end
-		lua_thread.create(remoteskladcontrol)
-		while true do
+	if data.options.startmessage == 1 then
+		sampAddChatMessage(('GETGUN v'..thisScript().version..' запущен. Автор: James_Bond/rubbishman/Coulson.'),
+		0x348cb2)
+		sampAddChatMessage(('Подробнее - /gg. Отключить это сообщение - /ggnot'), 0x348cb2)
+	end
+	lua_thread.create(remoteskladcontrol)
+	while true do
+		if menutrigger ~= nil then menu() menutrigger = nil end
+		wait(0)
+		while getActiveInterior() == 11 do
 			if menutrigger ~= nil then menu() menutrigger = nil end
 			wait(0)
-			while getActiveInterior() == 11 do
-				if menutrigger ~= nil then menu() menutrigger = nil end
-				wait(0)
-				res, handle = getCharPlayerIsTargeting(playerHandle)
-				if res then
-					resid, getgunid = sampGetPlayerIdByCharHandle(handle)
-					ggidnick = sampGetPlayerNickname(getgunid)
-					if string.find(ggidnick, "_") then
-						ggidname, ggidsurname = string.match(ggidnick, "(%g+)_(%g+)")
-					end
+			res, handle = getCharPlayerIsTargeting(playerHandle)
+			if res then
+				resid, getgunid = sampGetPlayerIdByCharHandle(handle)
+				ggidnick = sampGetPlayerNickname(getgunid)
+				if string.find(ggidnick, "_") then
+					ggidname, ggidsurname = string.match(ggidnick, "(%g+)_(%g+)")
 				end
-				while res and isKeyDown(whatkeyid(data.options.hotkey)) and sampIsChatInputActive() == false do
-					if sampIsDialogActive()  then sampCloseCurrentDialogWithButton(0) end
-					sampSendChat('/getgun '..getgunid)
-					local stopthis2 = 0
-					while sampIsDialogActive() == false and stopthis2 < 30 do wait(40)
-						stopthis2 = stopthis2 + 1
-					end
-					if sampIsDialogActive(123) and sampGetCurrentDialogId() == 123 then
-						wait(200)
-						sampSendDialogResponse(123, 1, 0, - 1)
-						wait(100)
-						capture = 99
-						checkwarehouse, prefix, color1, pcolor = sampGetChatString(99)
-						local stopthis2 = 0
-						while string.find(checkwarehouse, 'На складе осталось', 1, true) == nil and stopthis2 < 5 do
-							wait(0)
-							checkwarehouse, prefix, color1, pcolor = sampGetChatString(capture)
-							capture = capture - 1
-							if capture < 90 then capture = 99 stopthis2 = stopthis2 + 1 end
-						end
-						if checkwarehouse ~= nil and string.find(checkwarehouse, 'На складе осталось', 1, true) and color1 == -10185235 then
-							warehouse = tonumber(string.match(checkwarehouse, "(%d+)"))
-							if data.options.mode == 0 then
-								if warehouse < 100001 and warehouse > 79999 then ggid(getgunid, 3, 4, 0, 0, 2, 2) end
-								if warehouse < 80001 and warehouse > 49999 then ggid(getgunid, 3, 3, 0, 0, 1, 2) end
-								if warehouse < 50001 and warehouse > 29999 then ggid(getgunid, 3, 3, 0, 0, 0, 2) end
-								if warehouse < 30001 and warehouse > 19999 then ggid(getgunid, 2, 3, 0, 0, 0, 1) end
-								if warehouse < 20001 and warehouse > 9999 then ggid(getgunid, 1, 3, 0, 0, 0, 0) end
-								if warehouse < 10001 and warehouse > 0 then ggid(getgunid, 1, 2, 0, 0, 0, 0) end
-							else
-								ggid(getgunid, 3, 3, 0, 0, 0, 2)
-							end
-						end
-					end
+			end
+			while res and isKeyDown(whatkeyid(data.options.hotkey)) and sampIsChatInputActive() == false do
+				if sampIsDialogActive() then sampCloseCurrentDialogWithButton(0) end
+				sampSendChat('/getgun '..getgunid)
+				local stopthis2 = 0
+				while sampIsDialogActive() == false and stopthis2 < 30 do wait(40)
+					stopthis2 = stopthis2 + 1
 				end
-				if res == false and sampIsChatInputActive() == false and isKeyDown(whatkeyid(data.options.hotkey)) then
-					if sampIsDialogActive()  then sampCloseCurrentDialogWithButton(0) end
-					sampSendChat('/getgun')
-
+				if sampIsDialogActive(123) and sampGetCurrentDialogId() == 123 then
+					wait(200)
+					sampSendDialogResponse(123, 1, 0, - 1)
+					wait(100)
 					capture = 99
-					local stopthis = 0
-					while sampIsDialogActive() == false and stopthis < 30 do wait(40)
-						stopthis = stopthis + 1
+					checkwarehouse, prefix, color1, pcolor = sampGetChatString(99)
+					local stopthis2 = 0
+					while string.find(checkwarehouse, 'На складе осталось', 1, true) == nil and stopthis2 < 5 do
+						wait(0)
+						checkwarehouse, prefix, color1, pcolor = sampGetChatString(capture)
+						capture = capture - 1
+						if capture < 90 then capture = 99 stopthis2 = stopthis2 + 1 end
 					end
-					if sampIsDialogActive(123) and sampGetCurrentDialogId() == 123 then
-						wait(200)
-						sampSendDialogResponse(123, 1, 0, - 1)
-						wait(100)
-						capture = 99
-						checkwarehouse, prefix, color1, pcolor = sampGetChatString(99)
-						local stopthis1 = 0
-						while string.find(checkwarehouse, 'На складе осталось', 1, true) == nil and stopthis1 < 5 do
-							wait(0)
-							checkwarehouse, prefix, color1, pcolor = sampGetChatString(capture)
-							capture = capture - 1
-							if capture < 90 then capture = 99 stopthis1 = stopthis1 + 1 end
+					if checkwarehouse ~= nil and string.find(checkwarehouse, 'На складе осталось', 1, true) and color1 == -10185235 then
+						warehouse = tonumber(string.match(checkwarehouse, "(%d+)"))
+						if data.options.mode == 0 then
+							if warehouse < 100001 and warehouse > 79999 then ggid(getgunid, 3, 4, 0, 0, 2, 2) end
+							if warehouse < 80001 and warehouse > 49999 then ggid(getgunid, 3, 3, 0, 0, 1, 2) end
+							if warehouse < 50001 and warehouse > 29999 then ggid(getgunid, 3, 3, 0, 0, 0, 2) end
+							if warehouse < 30001 and warehouse > 19999 then ggid(getgunid, 2, 3, 0, 0, 0, 1) end
+							if warehouse < 20001 and warehouse > 9999 then ggid(getgunid, 1, 3, 0, 0, 0, 0) end
+							if warehouse < 10001 and warehouse > 0 then ggid(getgunid, 1, 2, 0, 0, 0, 0) end
+						else
+							ggid(getgunid, 3, 3, 0, 0, 0, 2)
 						end
-						if checkwarehouse ~= nil and string.find(checkwarehouse, 'На складе осталось', 1, true) and color1 == -10185235 then
-							warehouse = tonumber(string.match(checkwarehouse, "(%d+)"))
-							if data.options.mode == 0 then
-								if warehouse < 100001 and warehouse > 79999 then gg(4, 4, 0, 0, 2, 2) end
-								if warehouse < 80001 and warehouse > 49999 then gg(4, 3, 0, 0, 1, 2) end
-								if warehouse < 50001 and warehouse > 29999 then gg(4, 3, 0, 0, 0, 2) end
-								if warehouse < 30001 and warehouse > 19999 then gg(3, 3, 0, 0, 0, 1) end
-								if warehouse < 20001 and warehouse > 9999 then gg(2, 3, 0, 0, 0, 0) end
-								if warehouse < 10001 and warehouse > 0 then gg(2, 2, 0, 0, 0, 0) end
-							else
-								gg(3, 3, 0, 0, 0, 2)
-							end
+					end
+				end
+			end
+			if res == false and sampIsChatInputActive() == false and isKeyDown(whatkeyid(data.options.hotkey)) then
+				if sampIsDialogActive() then sampCloseCurrentDialogWithButton(0) end
+				sampSendChat('/getgun')
+
+				capture = 99
+				local stopthis = 0
+				while sampIsDialogActive() == false and stopthis < 30 do wait(40)
+					stopthis = stopthis + 1
+				end
+				if sampIsDialogActive(123) and sampGetCurrentDialogId() == 123 then
+					wait(200)
+					sampSendDialogResponse(123, 1, 0, - 1)
+					wait(100)
+					capture = 99
+					checkwarehouse, prefix, color1, pcolor = sampGetChatString(99)
+					local stopthis1 = 0
+					while string.find(checkwarehouse, 'На складе осталось', 1, true) == nil and stopthis1 < 5 do
+						wait(0)
+						checkwarehouse, prefix, color1, pcolor = sampGetChatString(capture)
+						capture = capture - 1
+						if capture < 90 then capture = 99 stopthis1 = stopthis1 + 1 end
+					end
+					if checkwarehouse ~= nil and string.find(checkwarehouse, 'На складе осталось', 1, true) and color1 == -10185235 then
+						warehouse = tonumber(string.match(checkwarehouse, "(%d+)"))
+						if data.options.mode == 0 then
+							if warehouse < 100001 and warehouse > 79999 then gg(4, 4, 0, 0, 2, 2) end
+							if warehouse < 80001 and warehouse > 49999 then gg(4, 3, 0, 0, 1, 2) end
+							if warehouse < 50001 and warehouse > 29999 then gg(4, 3, 0, 0, 0, 2) end
+							if warehouse < 30001 and warehouse > 19999 then gg(3, 3, 0, 0, 0, 1) end
+							if warehouse < 20001 and warehouse > 9999 then gg(2, 3, 0, 0, 0, 0) end
+							if warehouse < 10001 and warehouse > 0 then gg(2, 2, 0, 0, 0, 0) end
+						else
+							gg(3, 3, 0, 0, 0, 2)
 						end
 					end
 				end
 			end
 		end
-	else
-		sampAddChatMessage(('GETGUN отключён. Проверка лицензии не пройдена.'), 0xFE1312)
 	end
 end
 
 function cmdChangeMode()
 	if data.options.mode == 1 then data.options.mode = 0 sampAddChatMessage('Режим складосохранения деактивирован.', color) else data.options.mode = 1 sampAddChatMessage('Режим складосохранения активирован.', color)
 	end
-	LIP.save('moonloader\\config\\getgun.ini', data)
+	inicfg.save(data, "getgun")
 end
 
 function gg(gtgdeagle, gtgshotgun, gtgsmg, gtgak47, gtgm4a1, gtgrifle)
@@ -346,22 +345,12 @@ end
 function firstload()
 	if not doesDirectoryExist("moonloader\\config") then createDirectory("moonloader\\config") end
 	if not doesFileExist("moonloader\\config\\getgun.ini") then
-		local data =
-		{
-			options =
-			{
-				startmessage = 1,
-				hotkey = 'N',
-				mode = 0,
-			},
-		};
-		LIP.save('moonloader\\config\\getgun.ini', data);
+		inicfg.save(data, "getgun");
 		sampAddChatMessage(('Первый запуск GETGUN. Был создан .ini: moonloader\\config\\getgun.ini'), 0x348cb2)
 		sampAddChatMessage(('Приятной игры на Samp-Rp! С уважением, игрок Samp-Rp Revolution James_Bond!'), 0x348cb2)
 	end
-	data = LIP.load('moonloader\\config\\getgun.ini');
 	if data.options.mode == nil then data.options.mode = 0 end
-	LIP.save('moonloader\\config\\getgun.ini', data);
+	inicfg.save(data, "getgun");
 end
 function ggmenu()
 	menutrigger = 1
@@ -376,8 +365,7 @@ end
 function onload()
 	asodkas, licenseid = sampGetPlayerIdByCharHandle(PLAYER_PED)
 	licensenick = sampGetPlayerNickname(licenseid)
-	data = LIP.load('moonloader\\config\\getgun.ini');
-	LIP.save('moonloader\\config\\getgun.ini', data);
+	inicfg.save(data, "getgun");
 	sampRegisterChatCommand("gghotkey", cmdHotKey)
 	sampRegisterChatCommand("ggnot", cmdInform)
 	sampRegisterChatCommand("gg", ggmenu)
@@ -385,7 +373,7 @@ function onload()
 	sampRegisterChatCommand("gglog", changelog)
 end
 function changelog()
-	sampShowDialog(2342, "{ffbf00}GETGUN: История версий.", "{ffcc00}v1.2 [17.11.17]\n{ffffff}Добавлен режим складосохранения (/gg).\nИсправлен баг с зависанием, если не открылся диалог.\n{ffcc00}v1.1 [02.11.17]\n{ffffff}Исправлено зависание скрипта.\nУвеличена задержка.\n{ffcc00}v1.0 [01.11.17]\n{ffffff}Написан и опубликован в узком кругу.", "Закрыть")
+	sampShowDialog(2342, "{ffbf00}GETGUN: История версий.", "{ffcc00}v1.3 [07.12.17]\n{ffffff}Убрана проверка лицензии\nКод скрипта теперь открыт\n{ffcc00}v1.2 [17.11.17]\n{ffffff}Добавлен режим складосохранения (/gg).\nИсправлен баг с зависанием, если не открылся диалог.\n{ffcc00}v1.1 [02.11.17]\n{ffffff}Исправлено зависание скрипта.\nУвеличена задержка.\n{ffcc00}v1.0 [01.11.17]\n{ffffff}Написан и опубликован в узком кругу.", "Закрыть")
 end
 function cmdInform()
 	if data.options.startmessage == 1 then
@@ -393,8 +381,7 @@ function cmdInform()
 	else
 		data.options.startmessage = 1 sampAddChatMessage(('Уведомление активации GETGUN\'a при запуске игры включено'), 0x348cb2)
 	end
-	LIP.save('moonloader\\config\\getgun.ini', data);
-	data = LIP.load('moonloader\\config\\getgun.ini');
+	inicfg.save(data, "getgun");
 end
 function cmdHotKey()
 	lua_thread.create(cmdHotKey2)
@@ -407,54 +394,11 @@ function cmdHotKey2()
 	if resultMain then
 		if buttonMain == 1 then
 			data.options.hotkey = whatidkey(typ + 65)
-			LIP.save('moonloader\\config\\getgun.ini', data);
+			inicfg.save(data, "getgun");
 		end
 	end
 end
-function LIP.load(fileName)
-	assert(type(fileName) == 'string', 'Parameter "fileName" must be a string.');
-	local file = assert(io.open(fileName, 'r'), 'Error loading file : ' .. fileName);
-	local data = {};
-	local section;
-	for line in file:lines() do
-		local tempSection = line:match('^%[([^%[%]]+)%]$');
-		if(tempSection)then
-			section = tonumber(tempSection) and tonumber(tempSection) or tempSection;
-			data[section] = data[section] or {};
-		end
-		local param, value = line:match('^([%w|_]+)%s-=%s-(.+)$');
-		if(param and value ~= nil)then
-			if(tonumber(value))then
-				value = tonumber(value);
-			elseif(value == 'true')then
-				value = true;
-			elseif(value == 'false')then
-				value = false;
-			end
-			if(tonumber(param))then
-				param = tonumber(param);
-			end
-			data[section][param] = value;
-		end
-	end
-	file:close();
-	return data;
-end
-function LIP.save(fileName, data)
-	assert(type(fileName) == 'string', 'Parameter "fileName" must be a string.');
-	assert(type(data) == 'table', 'Parameter "data" must be a table.');
-	local file = assert(io.open(fileName, 'w+b'), 'Error loading file :' .. fileName);
-	local contents = '';
-	for section, param in pairs(data) do
-		contents = contents .. ('[%s]\n'):format(section);
-		for key, value in pairs(param) do
-			contents = contents .. ('%s=%s\n'):format(key, tostring(value));
-		end
-		contents = contents .. '\n';
-	end
-	file:write(contents);
-	file:close();
-end
+--made by fyp
 function submenus_show(menu, caption, select_button, close_button, back_button)
 	select_button, close_button, back_button = select_button or 'Select', close_button or 'Close', back_button or 'Back'
 	prev_menus = {}
@@ -557,8 +501,7 @@ function whatidkey(checkkeyid)
 	}
 	return keykey[checkkeyid]
 end
-function checkversion()
-	goplay = 0
+function update()
 	local fpath = os.getenv('TEMP') .. '\\getgun-version.json'
 	downloadUrlToFile('http://rubbishman.ru/dev/samp/getgun/version.json', fpath, function(id, status, p1, p2)
 		if status == dlstatus.STATUS_ENDDOWNLOADDATA then
@@ -569,24 +512,23 @@ function checkversion()
 			if info and info.latest then
 				version = tonumber(info.latest)
 				if version > tonumber(thisScript().version) then
-					sampAddChatMessage(('[GETGUN]: Обнаружено обновление. AutoReload может конфликтовать. Обновляюсь..'), 0x8B0000)
-					sampAddChatMessage(('[GETGUN]: Текущая версия: '..thisScript().version..". Новая версия: "..version), 0x8B0000)
-					goplay = 2
 					lua_thread.create(goupdate)
+				else
+					update = false
 				end
 			end
 		end
 	end
 end)
-wait(1000)
-if goplay ~= 2 then goplay = 1 end
 end
+--скачивание актуальной версии
 function goupdate()
+sampAddChatMessage(('[RTIMER]: Обнаружено обновление. Пытаюсь обновиться...'), color)
+sampAddChatMessage(('[RTIMER]: Текущая версия: '..thisScript().version..". Новая версия: "..version), color)
 wait(300)
 downloadUrlToFile(updatelink, thisScript().path, function(id3, status1, p13, p23)
 	if status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-	sampAddChatMessage(('[GETGUN]: Обновление завершено! Подробнее об обновлении - /gglog.'), 0x8B0000)
-	goplay = 1
+	sampAddChatMessage(('[RTIMER]: Обновление завершено! Подробнее об обновлении - /rtimerlog.'), color)
 	thisScript():reload()
 end
 end)
