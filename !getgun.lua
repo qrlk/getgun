@@ -5,7 +5,7 @@
 script_name("GETGUN")
 script_description("/gg")
 script_author("rubbishman")
-script_version("1.3")
+script_version("1.31")
 --------------------------------------VAR---------------------------------------
 color = 0x348cb2
 local inicfg = require 'inicfg'
@@ -27,6 +27,34 @@ local mod_submenus_sa = {
 			cmdInfo()
 		end
 	},
+			{
+			title = 'Сказать спасибо',
+			onclick = function()
+				local ffi = require 'ffi'
+				ffi.cdef [[
+								void* __stdcall ShellExecuteA(void* hwnd, const char* op, const char* file, const char* params, const char* dir, int show_cmd);
+								uint32_t __stdcall CoInitializeEx(void*, uint32_t);
+							]]
+				local shell32 = ffi.load 'Shell32'
+				local ole32 = ffi.load 'Ole32'
+				ole32.CoInitializeEx(nil, 2 + 4)
+				print(shell32.ShellExecuteA(nil, 'open', 'http://rubbishman.ru/donate', nil, nil, 1))
+			end
+		},
+		{
+			title = 'Связаться с автором (все баги сюда)',
+			onclick = function()
+				local ffi = require 'ffi'
+				ffi.cdef [[
+								void* __stdcall ShellExecuteA(void* hwnd, const char* op, const char* file, const char* params, const char* dir, int show_cmd);
+								uint32_t __stdcall CoInitializeEx(void*, uint32_t);
+							]]
+				local shell32 = ffi.load 'Shell32'
+				local ole32 = ffi.load 'Ole32'
+				ole32.CoInitializeEx(nil, 2 + 4)
+				print(shell32.ShellExecuteA(nil, 'open', 'http://rubbishman.ru/sampcontact', nil, nil, 1))
+			end
+		},
 	{
 		title = ' ',
 		onclick = function()
@@ -78,6 +106,20 @@ local mod_submenus_sa = {
 				end
 			},
 		}
+	},
+		{
+		title = 'Открыть страницу скрипта',
+		onclick = function()
+			local ffi = require 'ffi'
+			ffi.cdef [[
+							void* __stdcall ShellExecuteA(void* hwnd, const char* op, const char* file, const char* params, const char* dir, int show_cmd);
+							uint32_t __stdcall CoInitializeEx(void*, uint32_t);
+						]]
+			local shell32 = ffi.load 'Shell32'
+			local ole32 = ffi.load 'Ole32'
+			ole32.CoInitializeEx(nil, 2 + 4)
+			print(shell32.ShellExecuteA(nil, 'open', 'http://rubbishman.ru/samp/getgun', nil, nil, 1))
+		end
 	},
 	{
 		title = ' '
