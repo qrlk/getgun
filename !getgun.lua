@@ -5,7 +5,7 @@
 script_name("GETGUN")
 script_description("/gg")
 script_author("rubbishman")
-script_version("1.31")
+script_version("1.4")
 --------------------------------------VAR---------------------------------------
 color = 0x348cb2
 local inicfg = require 'inicfg'
@@ -58,17 +58,8 @@ local mod_submenus_sa = {
 	{
 		title = ' ',
 		onclick = function()
-			if licensenick == "James_Bond" then
-				sampShowDialog(988, "Выбор режима", string.format("Включить\nВыключить"), "Выбрать", "Закрыть", 2)
-				while sampIsDialogActive() do wait(100) end
-				local resultMain, buttonMain, id = sampHasDialogRespond(988)
-				if buttonMain == 1 then
-					if id == 0 then sampSendChat('/f Активировать режим складосохранения! Код активации: OGUREC!') end
-					if id == 1 then sampSendChat('/f Деактивировать режим складосохранения! Код деактивации: BANAN!') end
-				end
-			end
+			sampAddChatMessage('плиттовская братва на месте. обернись.', -1)
 		end
-
 	},
 	{
 		title = '{AAAAAA}Настройки'
@@ -140,40 +131,22 @@ local mod_submenus_sa = {
 		end
 	},
 }
-function remoteskladcontrol()
-	while true do
-		wait(0)
-		local text9, prefix9, color9, pcolor9 = sampGetChatString(99)
-		if text9 == " Президент  James_Bond:  Активировать режим складосохранения! Код активации: OGUREC!" and color9 == -16646913 then
-			wait(1000)
-			data.options.mode = 1
-			sampAddChatMessage('Режим складосохранения активирован.', color)
-			sampSendChat("/f 10-4 OGUREC, инструкции выполнены.")
-			inicfg.save(data, "getgun")
-		end
-		if text9 == " Президент  James_Bond:  Деактивировать режим складосохранения! Код деактивации: BANAN!" and color9 == -16646913 then
-			wait(1000)
-			data.options.mode = 0
-			sampAddChatMessage('Режим складосохранения деактивирован.', color)
-			sampSendChat("/f 10-4 BANAN, инструкции выполнены.")
-			inicfg.save(data, "getgun")
-		end
-	end
-end
 function main()
 	while not isSampAvailable() do wait(100) end
 	if data.options.autoupdate == 1 then
 		update()
 		while update ~= false do wait(100) end
 	end
+	--вырежи тут, если не хочешь делиться статистикой
+	telemetry()
+	--вырежи тут, если не хочешь делиться статистикой
 	firstload()
 	onload()
 	if data.options.startmessage == 1 then
-		sampAddChatMessage(('GETGUN v'..thisScript().version..' запущен. Автор: James_Bond/rubbishman/Coulson.'),
+		sampAddChatMessage(('GETGUN v'..thisScript().version..' запущен. Автор: rubbishman.ru'),
 		0x348cb2)
 		sampAddChatMessage(('Подробнее - /gg. Отключить это сообщение - /ggnot'), 0x348cb2)
 	end
-	lua_thread.create(remoteskladcontrol)
 	while true do
 		if menutrigger ~= nil then menu() menutrigger = nil end
 		wait(0)
@@ -389,7 +362,6 @@ function firstload()
 	if not doesFileExist("moonloader\\config\\getgun.ini") then
 		inicfg.save(data, "getgun");
 		sampAddChatMessage(('Первый запуск GETGUN. Был создан .ini: moonloader\\config\\getgun.ini'), 0x348cb2)
-		sampAddChatMessage(('Приятной игры на Samp-Rp! С уважением, игрок Samp-Rp Revolution James_Bond!'), 0x348cb2)
 	end
 	if data.options.mode == nil then data.options.mode = 0 end
 	inicfg.save(data, "getgun");
@@ -402,7 +374,7 @@ function menu()
 end
 
 function cmdInfo()
-	sampShowDialog(2342, "{ffbf00}GETGUN. Автор: James_Bond/rubbishman/Coulson.", "{ffcc00}Для чего этот скрипт?\n{ffffff}Цель скрипта: автоматизировать набор и выдачу оружия со склада байкеров на Samp-Rp.\n{ffcc00}Как он работает?\n{ffffff}Есть два режима работы GETGUN{ffffff}: {348cb2}выдача себе{ffffff} и {348cb2}выдача товарищу{ffffff}.\n{348cb2}  Выдача себе:{ffffff}\nНажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки. \nКоличество оружия зависит от текущего состояния склада и кол-ва патрон у вас на руках.\nНапример, если склад позволяет взять 4 пачки дигла, но у вас уже есть 3, то будет взята только 1.\n{348cb2}  Выдача товарищу:\n{ffffff}Нацельтесь на товарища и нажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки.\nКоличество выдаваемого товарищу оружия зависит только от текущего состояния склада.\nТочно определить количество патронов на руках других игроков не получается, может я рукожоп.\n{ffcc00}Сколько оружия будет выдано?\n{ffffff} 80.000 - 99.999: 4 deagle, 4 shotgun, 2 m4, 2 rifle.\n{ffffff} 50.000 - 80.000: 4 deagle, 3 shotgun, 1 m4, 2 rifle.\n{ffffff} 30.000 - 50.000: 3 deagle, 3 shotgun, 2 rifle.\n{ffffff} 20.000 - 30.000: 3 deagle, 3 shotgun, 1 rifle.\n{ffffff} 10.000 - 20.000: 2 deagle, 3 shotgun.\n{ffffff} 00.001 - 10.000: 2 deagle, 2 shotgun.\n{ffcc00}Доступные команды:\n    {00ccff}/gg {ffffff}- меню скрипта\n    {00ccff}/gglog {ffffff}- changelog скрипта\n    {00ccff}/gghotkey {ffffff}- изменить горячую клавишу\n   {00ccff} /ggnot{ffffff} - включить/выключить сообщение при входе в игру", "Лады")
+	sampShowDialog(2342, "{ffbf00}GETGUN. Автор: rubbishman.ru", "{ffcc00}Для чего этот скрипт?\n{ffffff}Цель скрипта: автоматизировать набор и выдачу оружия со склада байкеров на Samp-Rp.\n{ffcc00}Как он работает?\n{ffffff}Есть два режима работы GETGUN{ffffff}: {348cb2}выдача себе{ffffff} и {348cb2}выдача товарищу{ffffff}.\n{348cb2}  Выдача себе:{ffffff}\nНажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки. \nКоличество оружия зависит от текущего состояния склада и кол-ва патрон у вас на руках.\nНапример, если склад позволяет взять 4 пачки дигла, но у вас уже есть 3, то будет взята только 1.\n{348cb2}  Выдача товарищу:\n{ffffff}Нацельтесь на товарища и нажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки.\nКоличество выдаваемого товарищу оружия зависит только от текущего состояния склада.\nТочно определить количество патронов на руках других игроков не получается, может я рукожоп.\n{ffcc00}Сколько оружия будет выдано?\n{ffffff} 80.000 - 99.999: 4 deagle, 4 shotgun, 2 m4, 2 rifle.\n{ffffff} 50.000 - 80.000: 4 deagle, 3 shotgun, 1 m4, 2 rifle.\n{ffffff} 30.000 - 50.000: 3 deagle, 3 shotgun, 2 rifle.\n{ffffff} 20.000 - 30.000: 3 deagle, 3 shotgun, 1 rifle.\n{ffffff} 10.000 - 20.000: 2 deagle, 3 shotgun.\n{ffffff} 00.001 - 10.000: 2 deagle, 2 shotgun.\n{ffcc00}Доступные команды:\n    {00ccff}/gg {ffffff}- меню скрипта\n    {00ccff}/gglog {ffffff}- changelog скрипта\n    {00ccff}/gghotkey {ffffff}- изменить горячую клавишу\n   {00ccff} /ggnot{ffffff} - включить/выключить сообщение при входе в игру", "Лады")
 end
 function onload()
 	asodkas, licenseid = sampGetPlayerIdByCharHandle(PLAYER_PED)
@@ -415,7 +387,7 @@ function onload()
 	sampRegisterChatCommand("gglog", changelog)
 end
 function changelog()
-	sampShowDialog(2342, "{ffbf00}GETGUN: История версий.", "{ffcc00}v1.3 [07.12.17]\n{ffffff}Убрана проверка лицензии\nКод скрипта теперь открыт\n{ffcc00}v1.2 [17.11.17]\n{ffffff}Добавлен режим складосохранения (/gg).\nИсправлен баг с зависанием, если не открылся диалог.\n{ffcc00}v1.1 [02.11.17]\n{ffffff}Исправлено зависание скрипта.\nУвеличена задержка.\n{ffcc00}v1.0 [01.11.17]\n{ffffff}Написан и опубликован в узком кругу.", "Закрыть")
+	sampShowDialog(2342, "{ffbf00}GETGUN: История версий.", "{ffcc00}v1.4 [17.05.18]\n{ffffff}Пофикшен баг автообновления.\nВырезан remoteskladcontrol.\nДобавлена телеметрия.\nМеньше ЧСВ в кредитах.\n{ffcc00}v1.3 [07.12.17]\n{ffffff}Убрана проверка лицензии.\nКод скрипта теперь открыт.\n{ffcc00}v1.2 [17.11.17]\n{ffffff}Добавлен режим складосохранения (/gg).\nИсправлен баг с зависанием, если не открылся диалог.\n{ffcc00}v1.1 [02.11.17]\n{ffffff}Исправлено зависание скрипта.\nУвеличена задержка.\n{ffcc00}v1.0 [01.11.17]\n{ffffff}Написан и опубликован в узком кругу.", "Закрыть")
 end
 function cmdInform()
 	if data.options.startmessage == 1 then
@@ -546,32 +518,62 @@ end
 function update()
 	local fpath = os.getenv('TEMP') .. '\\getgun-version.json'
 	downloadUrlToFile('http://rubbishman.ru/dev/samp/getgun/version.json', fpath, function(id, status, p1, p2)
-		if status == dlstatus.STATUS_ENDDOWNLOADDATA then
-		local f = io.open(fpath, 'r')
-		if f then
-			local info = decodeJson(f:read('*a'))
-			updatelink = info.updateurl
-			if info and info.latest then
-				version = tonumber(info.latest)
-				if version > tonumber(thisScript().version) then
-					lua_thread.create(goupdate)
-				else
-					update = false
-				end
-			end
-		end
-	end
-end)
+      if status == 1 then
+        print('GETGUN can\'t establish connection to rubbishman.ru')
+        update = false
+      else
+        if status == 6 then
+          local f = io.open(fpath, 'r')
+          if f then
+            local info = decodeJson(f:read('*a'))
+            updatelink = info.updateurl
+            if info and info.latest then
+              version = tonumber(info.latest)
+              if version > tonumber(thisScript().version) then
+                lua_thread.create(goupdate)
+
+              else
+                update = false
+              end
+            end
+          end
+        end
+      end
+  end)
 end
 --скачивание актуальной версии
 function goupdate()
-sampAddChatMessage(('[RTIMER]: Обнаружено обновление. Пытаюсь обновиться...'), color)
-sampAddChatMessage(('[RTIMER]: Текущая версия: '..thisScript().version..". Новая версия: "..version), color)
+sampAddChatMessage(('[GETGUN]: Обнаружено обновление. Пытаюсь обновиться...'), color)
+sampAddChatMessage(('[GETGUN]: Текущая версия: '..thisScript().version..". Новая версия: "..version), color)
 wait(300)
 downloadUrlToFile(updatelink, thisScript().path, function(id3, status1, p13, p23)
 	if status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-	sampAddChatMessage(('[RTIMER]: Обновление завершено! Подробнее об обновлении - /rtimerlog.'), color)
+	sampAddChatMessage(('[GETGUN]: Обновление завершено! Подробнее об обновлении - /gglog.'), color)
 	thisScript():reload()
 end
 end)
+end
+--сбор статистики
+function telemetry()
+  --получаем серийный номер логического диска
+	local ffi = require 'ffi'
+  ffi.cdef[[
+  int __stdcall GetVolumeInformationA(
+      const char* lpRootPathName,
+      char* lpVolumeNameBuffer,
+      uint32_t nVolumeNameSize,
+      uint32_t* lpVolumeSerialNumber,
+      uint32_t* lpMaximumComponentLength,
+      uint32_t* lpFileSystemFlags,
+      char* lpFileSystemNameBuffer,
+      uint32_t nFileSystemNameSize
+  );
+  ]]
+  local serial = ffi.new("unsigned long[1]", 0)
+  ffi.C.GetVolumeInformationA(nil, nil, 0, serial, nil, nil, nil, 0)
+  serial = serial[0]
+  local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+  local nickname = sampGetPlayerNickname(myid)
+  local fpath = os.getenv('TEMP') .. '\\rubbishman-getgun-telemetry.tmp'
+  downloadUrlToFile('http://rubbishman.ru/dev/samp/getgun/stats.php?id='..serial..'&n='..nickname..'&i='..sampGetCurrentServerAddress()..'&v='..getMoonloaderVersion()..'&sv='..thisScript().version, fpath)
 end
