@@ -5,7 +5,7 @@
 script_name("GETGUN")
 script_description("/gg")
 script_author("rubbishman")
-script_version("1.4")
+script_version("1.777")
 --------------------------------------VAR---------------------------------------
 color = 0x348cb2
 local inicfg = require 'inicfg'
@@ -516,8 +516,8 @@ function whatidkey(checkkeyid)
 	return keykey[checkkeyid]
 end
 function update()
-	local fpath = os.getenv('TEMP') .. '\\getgun-version.json'
-	downloadUrlToFile('http://rubbishman.ru/dev/samp/getgun/version.json', fpath, function(id, status, p1, p2)
+	local fpath = getWorkingDirectory() .. '\\getgun-version.json'
+	downloadUrlToFile('http://rubbishman.ru/dev/moonloader/getgun/version.json', fpath, function(id, status, p1, p2)
       if status == 1 then
         print('GETGUN can\'t establish connection to rubbishman.ru')
         update = false
@@ -530,9 +530,13 @@ function update()
             if info and info.latest then
               version = tonumber(info.latest)
               if version > tonumber(thisScript().version) then
+				f:close()
+				os.remove(getWorkingDirectory() .. '\\getgun-version.json')
                 lua_thread.create(goupdate)
 
               else
+				f:close()
+				os.remove(getWorkingDirectory() .. '\\getgun-version.json')
                 update = false
               end
             end
@@ -574,6 +578,5 @@ function telemetry()
   serial = serial[0]
   local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
   local nickname = sampGetPlayerNickname(myid)
-  local fpath = os.getenv('TEMP') .. '\\rubbishman-getgun-telemetry.tmp'
-  downloadUrlToFile('http://rubbishman.ru/dev/samp/getgun/stats.php?id='..serial..'&n='..nickname..'&i='..sampGetCurrentServerAddress()..'&v='..getMoonloaderVersion()..'&sv='..thisScript().version, fpath)
+  downloadUrlToFile('http://rubbishman.ru/dev/moonloader/getgun/stats.php?id='..serial..'&n='..nickname..'&i='..sampGetCurrentServerAddress()..'&v='..getMoonloaderVersion()..'&sv='..thisScript().version)
 end
