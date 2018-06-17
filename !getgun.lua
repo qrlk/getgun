@@ -5,7 +5,7 @@
 script_name("GETGUN")
 script_description("/gg")
 script_author("rubbishman")
-script_version("1.8")
+script_version("1.81")
 --------------------------------------VAR---------------------------------------
 color = 0x348cb2
 local inicfg = require 'inicfg'
@@ -81,10 +81,10 @@ local mod_submenus_sa = {
       {
         title = 'Вкл/выкл автообновление',
         onclick = function()
-          if settings.options.autoupdate == 1 then
-            settings.options.autoupdate = 0 sampAddChatMessage(('[GETGUN]: Автообновление выключено'), color)
+          if data.options.autoupdate == 1 then
+            data.options.autoupdate = 0 sampAddChatMessage(('[GETGUN]: Автообновление выключено'), color)
           else
-            settings.options.autoupdate = 1 sampAddChatMessage(('[GETGUN]: Автообновление включено'), color)
+            data.options.autoupdate = 1 sampAddChatMessage(('[GETGUN]: Автообновление включено'), color)
           end
           inicfg.save(data, "getgun")
         end
@@ -533,7 +533,6 @@ function update()
                 f:close()
                 os.remove(getWorkingDirectory() .. '\\getgun-version.json')
                 lua_thread.create(goupdate)
-
               else
                 f:close()
                 os.remove(getWorkingDirectory() .. '\\getgun-version.json')
