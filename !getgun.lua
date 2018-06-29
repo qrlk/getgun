@@ -5,7 +5,7 @@
 script_name("GETGUN")
 script_description("/gg")
 script_author("rubbishman")
-script_version("1.82")
+script_version("1.85")
 --------------------------------------VAR---------------------------------------
 color = 0x348cb2
 local prefix = '['..string.upper(thisScript().name)..']: '
@@ -356,11 +356,7 @@ function getgun(gtgtype, gtgkolvo)
 end
 
 function firstload()
-  if not doesDirectoryExist("moonloader\\config") then createDirectory("moonloader\\config") end
-  if not doesFileExist("moonloader\\config\\getgun.ini") then
-    inicfg.save(data, "getgun");
-    sampAddChatMessage(('Первый запуск GETGUN. Был создан .ini: moonloader\\config\\getgun.ini'), 0x348cb2)
-  end
+
   if data.options.mode == nil then data.options.mode = 0 end
   inicfg.save(data, "getgun");
 end
@@ -599,7 +595,6 @@ function goupdate()
         print('Загрузка обновления завершена.')
         sampAddChatMessage((prefix..'Обновление завершено! Подробнее об обновлении - /pisslog.'), color)
         goupdatestatus = true
-        wait(100)
         thisScript():reload()
       end
       if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
