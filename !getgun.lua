@@ -5,7 +5,7 @@
 script_name("GETGUN")
 script_description("/gg")
 script_author("rubbishman")
-script_version("1.85")
+script_version("1.86")
 --------------------------------------VAR---------------------------------------
 color = 0x348cb2
 local prefix = '['..string.upper(thisScript().name)..']: '
@@ -593,7 +593,7 @@ function goupdate()
         print(string.format('Загружено %d из %d.', p13, p23))
       elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
         print('Загрузка обновления завершена.')
-        sampAddChatMessage((prefix..'Обновление завершено! Подробнее об обновлении - /pisslog.'), color)
+        sampAddChatMessage((prefix..'Обновление завершено! Подробнее об обновлении - /gglog.'), color)
         goupdatestatus = true
         thisScript():reload()
       end
