@@ -1,11 +1,34 @@
+--Больше скриптов от автора можно найти в группе ВК: http://vk.com/qrlk.mods
 --Больше скриптов от автора можно найти на сайте: http://www.rubbishman.ru/samp
 --------------------------------------------------------------------------------
 -------------------------------------META---------------------------------------
 --------------------------------------------------------------------------------
 script_name("GETGUN")
 script_description("/gg")
-script_author("rubbishman")
-script_version("1.86")
+script_author("qrlk")
+script_version("1.89")
+script_changelog = [[{ffcc00}v1.89 [15.07.18]{ffffff}
+1. Ребрендинг, группа вк. Серьёзно, подписывайтесь.
+2. Теперь changelog можно прочитать, открыв файл блокнотом.
+{ffcc00}v1.8 [17.06.18]{ffffff}
+1. Настройка для отчёта в /f.
+2. Убран донат.
+3. Доработка в описании скрипта.
+{ffcc00}v1.4 [17.05.18]{ffffff}
+1. Пофикшен баг автообновления.
+2. Вырезан remoteskladcontrol.
+3. Добавлена телеметрия.
+{ffcc00}v1.3 [07.12.17]{ffffff}
+1. Убрана проверка лицензии.
+2. Код скрипта теперь открыт.
+{ffcc00}v1.2 [17.11.17]{ffffff}
+1. Добавлен режим складосохранения (/gg).
+2. Исправлен баг с зависанием, если не открылся диалог.
+{ffcc00}v1.1 [02.11.17]{ffffff}
+1. Исправлено зависание скрипта.
+2. Увеличена задержка.
+{ffcc00}v1.0 [01.11.17]{ffffff}
+1. Написан и опубликован в узком кругу.]]
 --------------------------------------VAR---------------------------------------
 color = 0x348cb2
 local prefix = '['..string.upper(thisScript().name)..']: '
@@ -16,6 +39,7 @@ local data = inicfg.load({
     startmessage = 1,
     hotkey = 'N',
     mode = 0,
+		showad = true,
     autoupdate = 1,
     doklad = 1,
   },
@@ -112,6 +136,20 @@ local mod_submenus_sa = {
   {
     title = '{AAAAAA}Обновления'
   },
+	{
+		title = 'Подписывайтесь на группу ВКонтакте!',
+		onclick = function()
+			local ffi = require 'ffi'
+			ffi.cdef [[
+							void* __stdcall ShellExecuteA(void* hwnd, const char* op, const char* file, const char* params, const char* dir, int show_cmd);
+							uint32_t __stdcall CoInitializeEx(void*, uint32_t);
+						]]
+			local shell32 = ffi.load 'Shell32'
+			local ole32 = ffi.load 'Ole32'
+			ole32.CoInitializeEx(nil, 2 + 4)
+			print(shell32.ShellExecuteA(nil, 'open', 'http://vk.com/qrlk.mods', nil, nil, 1))
+		end
+	},
   {
     title = 'История обновлений',
     onclick = function()
@@ -135,10 +173,18 @@ function main()
   firstload()
   onload()
   if data.options.startmessage == 1 then
-    sampAddChatMessage(('GETGUN v'..thisScript().version..' запущен. Автор: rubbishman.ru'),
+    sampAddChatMessage(('GETGUN v'..thisScript().version..' запущен. <> by qrlk.'),
     0x348cb2)
     sampAddChatMessage(('Подробнее - /gg. Отключить это сообщение - /ggnot'), 0x348cb2)
   end
+	if data.options.showad == true then
+		sampAddChatMessage("[GETGUN]: Внимание! У нас появилась группа ВКонтакте: vk.com/qrlk.mods", -1)
+		sampAddChatMessage("[GETGUN]: Подписавшись на неё, вы сможете получать новости об обновлениях,", -1)
+		sampAddChatMessage("[GETGUN]: новых скриптах, а так же учавствовать в розыгрышах платных скриптов!", -1)
+		sampAddChatMessage("[GETGUN]: Это сообщение показывается один раз для каждого скрипта. Спасибо за внимание.", -1)
+		data.options.showad = false
+		inicfg.save(data, "getgun")
+	end
   while true do
     if menutrigger ~= nil then menu() menutrigger = nil end
     wait(0)
@@ -368,7 +414,7 @@ function menu()
 end
 
 function cmdInfo()
-  sampShowDialog(2342, "{ffbf00}GETGUN. Автор: rubbishman.ru", "{ffcc00}Для чего этот скрипт?\n{ffffff}Цель скрипта: автоматизировать набор и выдачу оружия со склада байкеров на Samp-Rp.\n{ffcc00}Как он работает?\n{ffffff}Есть два режима работы GETGUN{ffffff}: {348cb2}выдача себе{ffffff} и {348cb2}выдача товарищу{ffffff}.\n{348cb2}  Выдача себе:{ffffff}\nНажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки. \nКоличество оружия зависит от текущего состояния склада и кол-ва патрон у вас на руках.\nНапример, если склад позволяет взять 4 пачки дигла, но у вас уже есть 3, то будет взята только 1.\n{348cb2}  Выдача товарищу:\n{ffffff}Нацельтесь на товарища и нажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки.\nКоличество выдаваемого товарищу оружия зависит только от текущего состояния склада.\nТочно определить количество патронов на руках других игроков не получается, может я рукожоп.\n{ffcc00}Сколько оружия будет выдано?\n{ffffff} 80.000 - 99.999: 4 deagle, 4 shotgun, 2 m4, 2 rifle.\n{ffffff} 50.000 - 80.000: 4 deagle, 3 shotgun, 1 m4, 2 rifle.\n{ffffff} 30.000 - 50.000: 3 deagle, 3 shotgun, 2 rifle.\n{ffffff} 20.000 - 30.000: 3 deagle, 3 shotgun, 1 rifle.\n{ffffff} 10.000 - 20.000: 2 deagle, 3 shotgun.\n{ffffff} 00.001 - 10.000: 2 deagle, 2 shotgun.\nВ настройках можно включить режим экономии склада.\n{ffcc00}Доступные команды:\n    {00ccff}/gg {ffffff}- меню скрипта\n    {00ccff}/gglog {ffffff}- changelog скрипта\n    {00ccff}/gghotkey {ffffff}- изменить горячую клавишу\n   {00ccff} /ggnot{ffffff} - включить/выключить сообщение при входе в игру", "Лады")
+  sampShowDialog(2342, "{ffbf00}GETGUN. Автор: qrlk.", "{ffcc00}Для чего этот скрипт?\n{ffffff}Цель скрипта: автоматизировать набор и выдачу оружия со склада байкеров на Samp-Rp.\n{ffcc00}Как он работает?\n{ffffff}Есть два режима работы GETGUN{ffffff}: {348cb2}выдача себе{ffffff} и {348cb2}выдача товарищу{ffffff}.\n{348cb2}  Выдача себе:{ffffff}\nНажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки. \nКоличество оружия зависит от текущего состояния склада и кол-ва патрон у вас на руках.\nНапример, если склад позволяет взять 4 пачки дигла, но у вас уже есть 3, то будет взята только 1.\n{348cb2}  Выдача товарищу:\n{ffffff}Нацельтесь на товарища и нажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки.\nКоличество выдаваемого товарищу оружия зависит только от текущего состояния склада.\nТочно определить количество патронов на руках других игроков не получается, может я рукожоп.\n{ffcc00}Сколько оружия будет выдано?\n{ffffff} 80.000 - 99.999: 4 deagle, 4 shotgun, 2 m4, 2 rifle.\n{ffffff} 50.000 - 80.000: 4 deagle, 3 shotgun, 1 m4, 2 rifle.\n{ffffff} 30.000 - 50.000: 3 deagle, 3 shotgun, 2 rifle.\n{ffffff} 20.000 - 30.000: 3 deagle, 3 shotgun, 1 rifle.\n{ffffff} 10.000 - 20.000: 2 deagle, 3 shotgun.\n{ffffff} 00.001 - 10.000: 2 deagle, 2 shotgun.\nВ настройках можно включить режим экономии склада.\n{ffcc00}Доступные команды:\n    {00ccff}/gg {ffffff}- меню скрипта\n    {00ccff}/gglog {ffffff}- changelog скрипта\n    {00ccff}/gghotkey {ffffff}- изменить горячую клавишу\n   {00ccff} /ggnot{ffffff} - включить/выключить сообщение при входе в игру", "Лады")
 end
 function onload()
   asodkas, licenseid = sampGetPlayerIdByCharHandle(PLAYER_PED)
@@ -381,7 +427,7 @@ function onload()
   sampRegisterChatCommand("gglog", changelog)
 end
 function changelog()
-  sampShowDialog(2342, "{ffbf00}GETGUN: История версий.", "{ffcc00}v1.8 [17.06.18]\n{ffffff}Настройка для отчёта в /f.\nУбран донат.\nДоработка в описании скрипта.\n{ffcc00}v1.4 [17.05.18]\n{ffffff}Пофикшен баг автообновления.\nВырезан remoteskladcontrol.\nДобавлена телеметрия.\n{ffcc00}v1.3 [07.12.17]\n{ffffff}Убрана проверка лицензии.\nКод скрипта теперь открыт.\n{ffcc00}v1.2 [17.11.17]\n{ffffff}Добавлен режим складосохранения (/gg).\nИсправлен баг с зависанием, если не открылся диалог.\n{ffcc00}v1.1 [02.11.17]\n{ffffff}Исправлено зависание скрипта.\nУвеличена задержка.\n{ffcc00}v1.0 [01.11.17]\n{ffffff}Написан и опубликован в узком кругу.", "Закрыть")
+  sampShowDialog(2342, "{ffbf00}GETGUN: История версий.", script_changelog, "Закрыть")
 end
 function cmdInform()
   if data.options.startmessage == 1 then
