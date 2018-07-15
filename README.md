@@ -1,13 +1,15 @@
 # Описание 
 Скрипт автоматизирует взятие оружия со склада байкеров на Samp-Rp. По нажатию хоткея (работает только в баре) скрипт считывает состояние склада, количество оружия на руках и исходя из всего этого берёт адекватное количество стволов. После этого он считает количество сожранных материалов и отчитывается в /fb. Весь процесс занимает секунду. Выдавать можно себе или по таргету. Есть режим экономии склада. Скрипт разрабатывался для байкеров Samp-Rp и долгое время был приватным.  
 
-**Требования:** [CLEO 4.3](http://cleo.li/?lang=ru), [SAMPFUNCS 5.3.3](https://blast.hk/threads/17/), [MoonLoader](https://blast.hk/threads/13305/).  
+**Требования:** [CLEO 4+](http://cleo.li/?lang=ru), [SAMPFUNCS 5.3.3](https://blast.hk/threads/17/), [MoonLoader](https://blast.hk/threads/13305/).  
 **Активация:** Скрипт активируется автоматически.
 
 * /gg - открыть диалог скрипта.
 
-**Автор:** [rubbishman (James_Bond / Phil_Coulson)](http://rubbishman.ru/samp).
+**Автор:** [qrlk (James_Bond / Phil_Coulson)](http://rubbishman.ru/samp).  
+**Обсуждение в группе VK:** [ссылка](https://vk.com/topic-168860334_38597267).
 
 # Скриншоты
-![https://i.imgur.com/GbU2Aan.jpg?1](https://i.imgur.com/GbU2Aan.jpg?1)
+![https://i.imgur.com/diFVl3o.png](https://i.imgur.com/diFVl3o.png)
+![https://i.imgur.com/D5cES3h.png](https://i.imgur.com/D5cES3h.png)
 ![https://i.imgur.com/0I4Vjvk.jpg?1](https://i.imgur.com/0I4Vjvk.jpg?1)
