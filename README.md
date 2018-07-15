@@ -10,6 +10,6 @@
 **Обсуждение в группе VK:** [ссылка](https://vk.com/topic-168860334_38597267).
 
 # Скриншоты
-![https://i.imgur.com/diFVl3o.png](https://i.imgur.com/diFVl3o.png)
-![https://i.imgur.com/D5cES3h.png](https://i.imgur.com/D5cES3h.png)
+![https://i.imgur.com/diFVl3o.png](https://i.imgur.com/diFVl3o.png)  
+![https://i.imgur.com/D5cES3h.png](https://i.imgur.com/D5cES3h.png)  
 ![https://i.imgur.com/0I4Vjvk.jpg?1](https://i.imgur.com/0I4Vjvk.jpg?1)
