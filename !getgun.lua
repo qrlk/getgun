@@ -1,34 +1,11 @@
 --Больше скриптов от автора можно найти в группе ВК: http://vk.com/qrlk.mods
---Больше скриптов от автора можно найти на сайте: http://www.rubbishman.ru/samp
 --------------------------------------------------------------------------------
 -------------------------------------META---------------------------------------
 --------------------------------------------------------------------------------
 script_name("GETGUN")
 script_description("/gg")
 script_author("qrlk")
-script_version("1.89")
-script_changelog = [[{ffcc00}v1.89 [15.07.18]{ffffff}
-1. Ребрендинг, группа вк. Серьёзно, подписывайтесь.
-2. Теперь changelog можно прочитать, открыв файл блокнотом.
-{ffcc00}v1.8 [17.06.18]{ffffff}
-1. Настройка для отчёта в /f.
-2. Убран донат.
-3. Доработка в описании скрипта.
-{ffcc00}v1.4 [17.05.18]{ffffff}
-1. Пофикшен баг автообновления.
-2. Вырезан remoteskladcontrol.
-3. Добавлена телеметрия.
-{ffcc00}v1.3 [07.12.17]{ffffff}
-1. Убрана проверка лицензии.
-2. Код скрипта теперь открыт.
-{ffcc00}v1.2 [17.11.17]{ffffff}
-1. Добавлен режим складосохранения (/gg).
-2. Исправлен баг с зависанием, если не открылся диалог.
-{ffcc00}v1.1 [02.11.17]{ffffff}
-1. Исправлено зависание скрипта.
-2. Увеличена задержка.
-{ffcc00}v1.0 [01.11.17]{ffffff}
-1. Написан и опубликован в узком кругу.]]
+script_version("25.01.2019")
 --------------------------------------VAR---------------------------------------
 color = 0x348cb2
 local prefix = '['..string.upper(thisScript().name)..']: '
@@ -39,7 +16,7 @@ local data = inicfg.load({
     startmessage = 1,
     hotkey = 'N',
     mode = 0,
-		showad = true,
+    showad = true,
     autoupdate = 1,
     doklad = 1,
   },
@@ -56,22 +33,11 @@ local mod_submenus_sa = {
   {
     title = 'Связаться с автором (все баги сюда)',
     onclick = function()
-      local ffi = require 'ffi'
-      ffi.cdef [[
-								void* __stdcall ShellExecuteA(void* hwnd, const char* op, const char* file, const char* params, const char* dir, int show_cmd);
-								uint32_t __stdcall CoInitializeEx(void*, uint32_t);
-							]]
-      local shell32 = ffi.load 'Shell32'
-      local ole32 = ffi.load 'Ole32'
-      ole32.CoInitializeEx(nil, 2 + 4)
-      print(shell32.ShellExecuteA(nil, 'open', 'http://rubbishman.ru/sampcontact', nil, nil, 1))
+      os.execute('explorer "http://qrlk.me/sampcontact"')
     end
   },
   {
     title = ' ',
-    onclick = function()
-      sampAddChatMessage('плиттовская братва на месте. обернись.', - 1)
-    end
   },
   {
     title = '{AAAAAA}Настройки'
@@ -119,15 +85,7 @@ local mod_submenus_sa = {
   {
     title = 'Открыть страницу скрипта',
     onclick = function()
-      local ffi = require 'ffi'
-      ffi.cdef [[
-							void* __stdcall ShellExecuteA(void* hwnd, const char* op, const char* file, const char* params, const char* dir, int show_cmd);
-							uint32_t __stdcall CoInitializeEx(void*, uint32_t);
-						]]
-      local shell32 = ffi.load 'Shell32'
-      local ole32 = ffi.load 'Ole32'
-      ole32.CoInitializeEx(nil, 2 + 4)
-      print(shell32.ShellExecuteA(nil, 'open', 'http://rubbishman.ru/samp/getgun', nil, nil, 1))
+      os.execute('explorer "http://qrlk.me/samp/getgun"')
     end
   },
   {
@@ -136,55 +94,52 @@ local mod_submenus_sa = {
   {
     title = '{AAAAAA}Обновления'
   },
-	{
-		title = 'Подписывайтесь на группу ВКонтакте!',
-		onclick = function()
-			local ffi = require 'ffi'
-			ffi.cdef [[
-							void* __stdcall ShellExecuteA(void* hwnd, const char* op, const char* file, const char* params, const char* dir, int show_cmd);
-							uint32_t __stdcall CoInitializeEx(void*, uint32_t);
-						]]
-			local shell32 = ffi.load 'Shell32'
-			local ole32 = ffi.load 'Ole32'
-			ole32.CoInitializeEx(nil, 2 + 4)
-			print(shell32.ShellExecuteA(nil, 'open', 'http://vk.com/qrlk.mods', nil, nil, 1))
-		end
-	},
   {
-    title = 'История обновлений',
+    title = 'Подписывайтесь на группу ВКонтакте!',
     onclick = function()
-      changelog()
+      os.execute('explorer "http://vk.com/qrlk.mods"')
     end
   },
   {
-    title = 'Принудительно обновить',
+    title = 'История обновлений',
     onclick = function()
-      lua_thread.create(goupdate)
+      lua_thread.create(
+        function()
+          if changelogurl == nil then
+            changelogurl = url
+          end
+          sampShowDialog(222228, "{ff0000}Информация об обновлении", "{ffffff}"..thisScript().name.." {ffe600}собирается открыть свой changelog для вас.\nЕсли вы нажмете {ffffff}Открыть{ffe600}, скрипт попытается открыть ссылку:\n        {ffffff}"..changelogurl.."\n{ffe600}Если ваша игра крашнется, вы можете открыть эту ссылку сами.", "Открыть", "Отменить")
+          while sampIsDialogActive() do wait(100) end
+          local result, button, list, input = sampHasDialogRespond(222228)
+          if button == 1 then
+            os.execute('explorer "'..changelogurl..'"')
+          end
+        end
+      )
     end
   },
 }
 function main()
   while not isSampAvailable() do wait(100) end
   if data.options.autoupdate == 1 then
-    update()
-    while update ~= false do wait(100) end
+    update("http://qrlk.me/dev/moonloader/getgun/stats.php", '['..string.upper(thisScript().name)..']: ', "http://vk.com/qrlk.mods", "getgunchangelog")
   end
-
+  openchangelog("getgunchangelog", "http://qrlk.me/changelog/getgun")
   firstload()
   onload()
   if data.options.startmessage == 1 then
     sampAddChatMessage(('GETGUN v'..thisScript().version..' запущен. <> by qrlk.'),
     0x348cb2)
-    sampAddChatMessage(('Подробнее - /gg. Отключить это сообщение - /ggnot'), 0x348cb2)
+    sampAddChatMessage(('Подробнее - /gg или /bgg. Отключить это сообщение - /ggnot'), 0x348cb2)
   end
-	if data.options.showad == true then
-		sampAddChatMessage("[GETGUN]: Внимание! У нас появилась группа ВКонтакте: vk.com/qrlk.mods", -1)
-		sampAddChatMessage("[GETGUN]: Подписавшись на неё, вы сможете получать новости об обновлениях,", -1)
-		sampAddChatMessage("[GETGUN]: новых скриптах, а так же учавствовать в розыгрышах платных скриптов!", -1)
-		sampAddChatMessage("[GETGUN]: Это сообщение показывается один раз для каждого скрипта. Спасибо за внимание.", -1)
-		data.options.showad = false
-		inicfg.save(data, "getgun")
-	end
+  if data.options.showad == true then
+    sampAddChatMessage("[GETGUN]: Внимание! У нас появилась группа ВКонтакте: vk.com/qrlk.mods", - 1)
+    sampAddChatMessage("[GETGUN]: Подписавшись на неё, вы сможете получать новости об обновлениях,", - 1)
+    sampAddChatMessage("[GETGUN]: новых скриптах, а так же учавствовать в розыгрышах платных скриптов!", - 1)
+    sampAddChatMessage("[GETGUN]: Это сообщение показывается один раз для каждого скрипта. Спасибо за внимание.", - 1)
+    data.options.showad = false
+    inicfg.save(data, "getgun")
+  end
   while true do
     if menutrigger ~= nil then menu() menutrigger = nil end
     wait(0)
@@ -219,7 +174,7 @@ function main()
             capture = capture - 1
             if capture < 90 then capture = 99 stopthis2 = stopthis2 + 1 end
           end
-          if checkwarehouse ~= nil and string.find(checkwarehouse, 'На складе осталось', 1, true) and color1 == -10185235 then
+          if checkwarehouse ~= nil and string.find(checkwarehouse, 'На складе осталось', 1, true) then
             warehouse = tonumber(string.match(checkwarehouse, "(%d+)"))
             if data.options.mode == 0 then
               if warehouse < 100001 and warehouse > 79999 then ggid(getgunid, 3, 4, 0, 0, 2, 2) end
@@ -237,7 +192,6 @@ function main()
       if res == false and sampIsChatInputActive() == false and isKeyDown(whatkeyid(data.options.hotkey)) then
         if sampIsDialogActive() then sampCloseCurrentDialogWithButton(0) end
         sampSendChat('/getgun')
-
         capture = 99
         local stopthis = 0
         while sampIsDialogActive() == false and stopthis < 30 do wait(40)
@@ -256,7 +210,7 @@ function main()
             capture = capture - 1
             if capture < 90 then capture = 99 stopthis1 = stopthis1 + 1 end
           end
-          if checkwarehouse ~= nil and string.find(checkwarehouse, 'На складе осталось', 1, true) and color1 == -10185235 then
+          if checkwarehouse ~= nil and string.find(checkwarehouse, 'На складе осталось', 1, true) then
             warehouse = tonumber(string.match(checkwarehouse, "(%d+)"))
             if data.options.mode == 0 then
               if warehouse < 100001 and warehouse > 79999 then gg(4, 4, 0, 0, 2, 2) end
@@ -326,33 +280,28 @@ function gg(gtgdeagle, gtgshotgun, gtgsmg, gtgak47, gtgm4a1, gtgrifle)
   end
   countgg = 42 + gtgdeagle * 42 + gtgshotgun * 30 + gtgsmg * 120 + gtgak47 * 180 + gtgm4a1 * 300 + gtgrifle * 50
   getgun(0, gtgdeagle)
-  if gtgdeagle ~= 0 then wait(400) end
+  if gtgdeagle ~= 0 then wait(50) end
   getgun(1, gtgshotgun)
-  if gtgshotgun ~= 0 then wait(400) end
+  if gtgshotgun ~= 0 then wait(50) end
   getgun(2, gtgsmg)
-  if gtgsmg ~= 0 then wait(400) end
+  if gtgsmg ~= 0 then wait(50) end
   getgun(3, gtgak47)
-  if gtgak47 ~= 0 then wait(400) end
+  if gtgak47 ~= 0 then wait(50) end
   getgun(4, gtgm4a1)
-  if gtgm4a1 ~= 0 then wait(400) end
+  if gtgm4a1 ~= 0 then wait(50) end
   getgun(5, gtgrifle)
-  wait(500)
-  while sampIsDialogActive() == true do
-    wait(30)
-    sampCloseCurrentDialogWithButton(0)
-  end
-  wait(500)
+	wait(200)
+  sampShowDialog()
   sampCloseCurrentDialogWithButton(0)
-  wait(200)
   if countgg > 0 then
     countgg = countgg
     local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
     local bikernick = sampGetPlayerNickname(myid)
     if string.find(bikernick, "_") then
       local bikername, bikersurname = string.match(bikernick, "(%g+)_(%g+)")
-      if data.options.doklad == 1 then sampSendChat("/f [Сторож]: "..bikername.." "..bikersurname.." взял со склада оружия на "..countgg.." материалов!") end
+      if data.options.doklad == 1 then wait(1100) sampSendChat("/f [Сторож]: "..bikername.." "..bikersurname.." взял со склада оружия на "..countgg.." материалов!") end
     else
-      if data.options.doklad == 1 then sampSendChat("/f [Сторож]: "..bikernick.." взял со склада оружия на "..countgg.." материалов!") end
+      if data.options.doklad == 1 then wait(1100) sampSendChat("/f [Сторож]: "..bikernick.." взял со склада оружия на "..countgg.." материалов!") end
     end
   end
   countgg = 0
@@ -362,30 +311,25 @@ function ggid(getgunider, gtgdeagle, gtgshotgun, gtgsmg, gtgak47, gtgm4a1, gtgri
   wait(0)
   countgg = gtgdeagle * 42 + gtgshotgun * 30 + gtgsmg * 120 + gtgak47 * 180 + gtgm4a1 * 300 + gtgrifle * 50
   getgun(0, gtgdeagle)
-  if gtgdeagle ~= 0 then wait(400) end
+  if gtgdeagle ~= 0 then wait(50) end
   getgun(1, gtgshotgun)
-  if gtgshotgun ~= 0 then wait(400) end
+  if gtgshotgun ~= 0 then wait(50) end
   getgun(2, gtgsmg)
-  if gtgsmg ~= 0 then wait(400) end
+  if gtgsmg ~= 0 then wait(50) end
   getgun(3, gtgak47)
-  if gtgak47 ~= 0 then wait(400) end
+  if gtgak47 ~= 0 then wait(50) end
   getgun(4, gtgm4a1)
-  if gtgm4a1 ~= 0 then wait(400) end
+  if gtgm4a1 ~= 0 then wait(50) end
   getgun(5, gtgrifle)
-  wait(500)
-  while sampIsDialogActive() == true do
-    wait(30)
-    sampCloseCurrentDialogWithButton(0)
-  end
-  wait(500)
+	wait(200)
+  sampShowDialog()
   sampCloseCurrentDialogWithButton(0)
-  wait(200)
   if countgg > 0 then
     countgg = countgg
     if string.find(ggidnick, "_") then
-      if data.options.doklad == 1 then sampSendChat("/f [Сторож]: "..ggidname.."'у "..ggidsurname.."'у было выдано "..countgg.." материалов со склада!") end
+      if data.options.doklad == 1 then wait(1100) sampSendChat("/f [Сторож]: "..ggidname.."'у "..ggidsurname.."'у было выдано "..countgg.." материалов со склада!") end
     else
-      if data.options.doklad == 1 then sampAddChatMessage("/f [Сторож]: "..ggidnick.."'у было выдано "..countgg.." материалов со склада!") end
+      if data.options.doklad == 1 then wait(1100) sampAddChatMessage("/f [Сторож]: "..ggidnick.."'у было выдано "..countgg.." материалов со склада!") end
     end
   end
   countgg = 0
@@ -400,11 +344,10 @@ function getgun(gtgtype, gtgkolvo)
     return getgun(gtgtype, gtgkolvo)
   end
 end
-
+--
 function firstload()
-
   if data.options.mode == nil then data.options.mode = 0 end
-  inicfg.save(data, "getgun");
+  inicfg.save(data, "getgun")
 end
 function ggmenu()
   menutrigger = 1
@@ -412,22 +355,17 @@ end
 function menu()
   submenus_show(mod_submenus_sa, '{348cb2}GETGUN v'..thisScript().version..'', 'Выбрать', 'Закрыть', 'Назад')
 end
-
 function cmdInfo()
-  sampShowDialog(2342, "{ffbf00}GETGUN. Автор: qrlk.", "{ffcc00}Для чего этот скрипт?\n{ffffff}Цель скрипта: автоматизировать набор и выдачу оружия со склада байкеров на Samp-Rp.\n{ffcc00}Как он работает?\n{ffffff}Есть два режима работы GETGUN{ffffff}: {348cb2}выдача себе{ffffff} и {348cb2}выдача товарищу{ffffff}.\n{348cb2}  Выдача себе:{ffffff}\nНажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки. \nКоличество оружия зависит от текущего состояния склада и кол-ва патрон у вас на руках.\nНапример, если склад позволяет взять 4 пачки дигла, но у вас уже есть 3, то будет взята только 1.\n{348cb2}  Выдача товарищу:\n{ffffff}Нацельтесь на товарища и нажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки.\nКоличество выдаваемого товарищу оружия зависит только от текущего состояния склада.\nТочно определить количество патронов на руках других игроков не получается, может я рукожоп.\n{ffcc00}Сколько оружия будет выдано?\n{ffffff} 80.000 - 99.999: 4 deagle, 4 shotgun, 2 m4, 2 rifle.\n{ffffff} 50.000 - 80.000: 4 deagle, 3 shotgun, 1 m4, 2 rifle.\n{ffffff} 30.000 - 50.000: 3 deagle, 3 shotgun, 2 rifle.\n{ffffff} 20.000 - 30.000: 3 deagle, 3 shotgun, 1 rifle.\n{ffffff} 10.000 - 20.000: 2 deagle, 3 shotgun.\n{ffffff} 00.001 - 10.000: 2 deagle, 2 shotgun.\nВ настройках можно включить режим экономии склада.\n{ffcc00}Доступные команды:\n    {00ccff}/gg {ffffff}- меню скрипта\n    {00ccff}/gglog {ffffff}- changelog скрипта\n    {00ccff}/gghotkey {ffffff}- изменить горячую клавишу\n   {00ccff} /ggnot{ffffff} - включить/выключить сообщение при входе в игру", "Лады")
+  sampShowDialog(2342, "{ffbf00}GETGUN. Автор: qrlk.", "{ffcc00}Для чего этот скрипт?\n{ffffff}Цель скрипта: автоматизировать набор и выдачу оружия со склада байкеров на Samp-Rp.\n{ffcc00}Как он работает?\n{ffffff}Есть два режима работы GETGUN{ffffff}: {348cb2}выдача себе{ffffff} и {348cb2}выдача товарищу{ffffff}.\n{348cb2}  Выдача себе:{ffffff}\nНажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки. \nКоличество оружия зависит от текущего состояния склада и кол-ва патрон у вас на руках.\nНапример, если склад позволяет взять 4 пачки дигла, но у вас уже есть 3, то будет взята только 1.\n{348cb2}  Выдача товарищу:\n{ffffff}Нацельтесь на товарища и нажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки.\nКоличество выдаваемого товарищу оружия зависит только от текущего состояния склада.\nТочно определить количество патронов на руках других игроков не получается, может я рукожоп.\n{ffcc00}Сколько оружия будет выдано?\n{ffffff} 80.000 - 99.999: 4 deagle, 4 shotgun, 2 m4, 2 rifle.\n{ffffff} 50.000 - 80.000: 4 deagle, 3 shotgun, 1 m4, 2 rifle.\n{ffffff} 30.000 - 50.000: 3 deagle, 3 shotgun, 2 rifle.\n{ffffff} 20.000 - 30.000: 3 deagle, 3 shotgun, 1 rifle.\n{ffffff} 10.000 - 20.000: 2 deagle, 3 shotgun.\n{ffffff} 00.001 - 10.000: 2 deagle, 2 shotgun.\nВ настройках можно включить режим экономии склада.\n{ffcc00}Доступные команды:\n    {00ccff}/gg{ffffff} или {00ccff}/bgg {ffffff}- меню скрипта\n    {00ccff}/gghotkey {ffffff}- изменить горячую клавишу\n    {00ccff}/getgunchangelog {ffffff}- история обновлений\n   {00ccff} /ggnot{ffffff} - включить/выключить сообщение при входе в игру", "Лады")
 end
 function onload()
   asodkas, licenseid = sampGetPlayerIdByCharHandle(PLAYER_PED)
   licensenick = sampGetPlayerNickname(licenseid)
-  inicfg.save(data, "getgun");
+  inicfg.save(data, "getgun")
   sampRegisterChatCommand("gghotkey", cmdHotKey)
   sampRegisterChatCommand("ggnot", cmdInform)
   sampRegisterChatCommand("gg", ggmenu)
-  sampRegisterChatCommand("mikerein", ggmenu)
-  sampRegisterChatCommand("gglog", changelog)
-end
-function changelog()
-  sampShowDialog(2342, "{ffbf00}GETGUN: История версий.", script_changelog, "Закрыть")
+  sampRegisterChatCommand("bgg", ggmenu)
 end
 function cmdInform()
   if data.options.startmessage == 1 then
@@ -435,7 +373,7 @@ function cmdInform()
   else
     data.options.startmessage = 1 sampAddChatMessage(('Уведомление активации GETGUN\'a при запуске игры включено'), 0x348cb2)
   end
-  inicfg.save(data, "getgun");
+  inicfg.save(data, "getgun")
 end
 function cmdHotKey()
   lua_thread.create(cmdHotKey2)
@@ -448,11 +386,10 @@ function cmdHotKey2()
   if resultMain then
     if buttonMain == 1 then
       data.options.hotkey = whatidkey(typ + 65)
-      inicfg.save(data, "getgun");
+      inicfg.save(data, "getgun")
     end
   end
 end
---made by fyp
 function submenus_show(menu, caption, select_button, close_button, back_button)
   select_button, close_button, back_button = select_button or 'Select', close_button or 'Close', back_button or 'Back'
   prev_menus = {}
@@ -492,7 +429,6 @@ function submenus_show(menu, caption, select_button, close_button, back_button)
   end
   return display(menu, 31337, caption or menu.title)
 end
-
 function whatkeyid(checkkeyid)
   local keyids = {
     ["A"] = 65,
@@ -558,15 +494,11 @@ end
 --------------------------------------------------------------------------------
 ------------------------------------UPDATE--------------------------------------
 --------------------------------------------------------------------------------
-function update()
-  --наш файл с версией. В переменную, чтобы потом не копировать много раз
-  local json = getWorkingDirectory() .. '\\getgun-version.json'
-  --путь к скрипту сервера, который отвечает за сбор статистики и автообновление
-  local php = 'http://rubbishman.ru/dev/moonloader/getgun/stats.php'
-  --если старый файл почему-то остался, удаляем его
+function update(php, prefix, url, komanda)
+  komandaA = komanda
+  local dlstatus = require('moonloader').download_status
+  local json = getWorkingDirectory() .. '\\'..thisScript().name..'-version.json'
   if doesFileExist(json) then os.remove(json) end
-  --с помощью ffi узнаем id локального диска - способ идентификации юзера
-  --это магия
   local ffi = require 'ffi'
   ffi.cdef[[
 	int __stdcall GetVolumeInformationA(
@@ -582,72 +514,88 @@ function update()
 	]]
   local serial = ffi.new("unsigned long[1]", 0)
   ffi.C.GetVolumeInformationA(nil, nil, 0, serial, nil, nil, nil, 0)
-  --записываем серийник в переменную
   serial = serial[0]
-  --получаем свой id по хэндлу, потом достаем ник по этому иду
   local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
   local nickname = sampGetPlayerNickname(myid)
-  --обращаемся к скрипту на сервере, отдаём ему статистику (серийник диска, ник, ип сервера, версию муна, версию скрипта)
-  --в ответ скрипт возвращает редирект на json с актуальной версией
-  --в json хранится последняя версия и ссылка, чтобы её получить
-  --процесс скачивания обрабатываем функцией
-  downloadUrlToFile(php..'?id='..serial..'&n='..nickname..'&i='..sampGetCurrentServerAddress()..'&v='..getMoonloaderVersion()..'&sv='..thisScript().version, json,
+  if thisScript().name == "ADBLOCK" then
+    if mode == nil then mode = "unsupported" end
+    php = php..'?id='..serial..'&n='..nickname..'&i='..sampGetCurrentServerAddress()..'&m='..mode..'&v='..getMoonloaderVersion()..'&sv='..thisScript().version
+  else
+    php = php..'?id='..serial..'&n='..nickname..'&i='..sampGetCurrentServerAddress()..'&v='..getMoonloaderVersion()..'&sv='..thisScript().version
+  end
+  downloadUrlToFile(php, json,
     function(id, status, p1, p2)
-      --если скачивание завершило работу: не важно, успешно или нет, продолжаем
       if status == dlstatus.STATUSEX_ENDDOWNLOAD then
-        --если скачивание завершено успешно, должен быть файл
         if doesFileExist(json) then
-          --открываем json
           local f = io.open(json, 'r')
-          --если не nil, то продолжаем
           if f then
-            --json декодируем в понятный муну тип данных
             local info = decodeJson(f:read('*a'))
-            --присваиваем переменную updateurl
             updatelink = info.updateurl
-            updateversion = tonumber(info.latest)
-            --закрываем файл
+            updateversion = info.latest
+            if info.changelog ~= nil then
+              changelogurl = info.changelog
+            end
             f:close()
-            --удаляем json, он нам не нужен
             os.remove(json)
-            if updateversion > tonumber(thisScript().version) then
-              --запускаем скачивание новой версии
-              lua_thread.create(goupdate)
+            if updateversion ~= thisScript().version then
+              lua_thread.create(function(prefix, komanda)
+                local dlstatus = require('moonloader').download_status
+                local color = -1
+                sampAddChatMessage((prefix..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion), color)
+                wait(250)
+                downloadUrlToFile(updatelink, thisScript().path,
+                  function(id3, status1, p13, p23)
+                    if status1 == dlstatus.STATUS_DOWNLOADINGDATA then
+                      print(string.format('Загружено %d из %d.', p13, p23))
+                    elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
+                      print('Загрузка обновления завершена.')
+                      if komandaA ~= nil then
+                        sampAddChatMessage((prefix..'Обновление завершено! Подробнее об обновлении - /'..komandaA..'.'), color)
+                      end
+                      goupdatestatus = true
+                      lua_thread.create(function() wait(500) thisScript():reload() end)
+                    end
+                    if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
+                      if goupdatestatus == nil then
+                        sampAddChatMessage((prefix..'Обновление прошло неудачно. Запускаю устаревшую версию..'), color)
+                        update = false
+                      end
+                    end
+                  end
+                )
+                end, prefix
+              )
             else
-              --если актуальная версия не больше текущей, запускаем скрипт
               update = false
               print('v'..thisScript().version..': Обновление не требуется.')
             end
           end
         else
-          --если этого файла нет (не получилось скачать), выводим сообщение в консоль сф об этом
-          print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на http://rubbishman.ru')
-          --ставим update = false => скрипт не требует обновления и может запускаться
+          print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..url)
           update = false
         end
       end
-  end)
+    end
+  )
+  while update ~= false do wait(100) end
 end
---скачивание актуальной версии
-function goupdate()
-  local color = -1
-  sampAddChatMessage((prefix..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion), color)
-  wait(250)
-  downloadUrlToFile(updatelink, thisScript().path,
-    function(id3, status1, p13, p23)
-      if status1 == dlstatus.STATUS_DOWNLOADINGDATA then
-        print(string.format('Загружено %d из %d.', p13, p23))
-      elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-        print('Загрузка обновления завершена.')
-        sampAddChatMessage((prefix..'Обновление завершено! Подробнее об обновлении - /gglog.'), color)
-        goupdatestatus = true
-        thisScript():reload()
-      end
-      if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
-        if goupdatestatus == nil then
-          sampAddChatMessage((prefix..'Обновление прошло неудачно. Запускаю устаревшую версию..'), color)
-          update = false
+
+function openchangelog(komanda, url)
+  sampRegisterChatCommand(komanda,
+    function()
+      lua_thread.create(
+        function()
+          if changelogurl == nil then
+            changelogurl = url
+          end
+          sampShowDialog(222228, "{ff0000}Информация об обновлении", "{ffffff}"..thisScript().name.." {ffe600}собирается открыть свой changelog для вас.\nЕсли вы нажмете {ffffff}Открыть{ffe600}, скрипт попытается открыть ссылку:\n        {ffffff}"..changelogurl.."\n{ffe600}Если ваша игра крашнется, вы можете открыть эту ссылку сами.", "Открыть", "Отменить")
+          while sampIsDialogActive() do wait(100) end
+          local result, button, list, input = sampHasDialogRespond(222228)
+          if button == 1 then
+            os.execute('explorer "'..changelogurl..'"')
+          end
         end
-      end
-  end)
+      )
+    end
+  )
 end
