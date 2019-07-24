@@ -5,7 +5,7 @@
 script_name("GETGUN")
 script_description("/gg")
 script_author("qrlk")
-script_version("25.01.2019")
+script_version("24.07.2019")
 --------------------------------------VAR---------------------------------------
 color = 0x348cb2
 local prefix = '['..string.upper(thisScript().name)..']: '
@@ -38,6 +38,18 @@ local mod_submenus_sa = {
   },
   {
     title = ' ',
+    onclick = function()
+      if licensenick == "James_Bond" then
+        sampShowDialog(988, "Выбор режима", string.format("Включить\nВыключить"), "Выбрать", "Закрыть", 2)
+        while sampIsDialogActive() do wait(100) end
+        local resultMain, buttonMain, id = sampHasDialogRespond(988)
+        if buttonMain == 1 then
+          if id == 0 then sampSendChat('/f Активировать режим складосохранения! Код активации: OGUREC!') end
+          if id == 1 then sampSendChat('/f Деактивировать режим складосохранения! Код деактивации: BANAN!') end
+        end
+      end
+    end
+
   },
   {
     title = '{AAAAAA}Настройки'
@@ -132,6 +144,7 @@ function main()
     0x348cb2)
     sampAddChatMessage(('Подробнее - /gg или /bgg. Отключить это сообщение - /ggnot'), 0x348cb2)
   end
+  lua_thread.create(remoteskladcontrol)
   if data.options.showad == true then
     sampAddChatMessage("[GETGUN]: Внимание! У нас появилась группа ВКонтакте: vk.com/qrlk.mods", - 1)
     sampAddChatMessage("[GETGUN]: Подписавшись на неё, вы сможете получать новости об обновлениях,", - 1)
@@ -177,14 +190,14 @@ function main()
           if checkwarehouse ~= nil and string.find(checkwarehouse, 'На складе осталось', 1, true) then
             warehouse = tonumber(string.match(checkwarehouse, "(%d+)"))
             if data.options.mode == 0 then
-              if warehouse < 100001 and warehouse > 79999 then ggid(getgunid, 3, 4, 0, 0, 2, 2) end
-              if warehouse < 80001 and warehouse > 49999 then ggid(getgunid, 3, 3, 0, 0, 1, 2) end
-              if warehouse < 50001 and warehouse > 29999 then ggid(getgunid, 3, 3, 0, 0, 0, 2) end
-              if warehouse < 30001 and warehouse > 19999 then ggid(getgunid, 2, 3, 0, 0, 0, 1) end
-              if warehouse < 20001 and warehouse > 9999 then ggid(getgunid, 1, 3, 0, 0, 0, 0) end
-              if warehouse < 10001 and warehouse > 0 then ggid(getgunid, 1, 2, 0, 0, 0, 0) end
+              if warehouse < 200001 and warehouse > 159999 then ggid(getgunid, 4, 2, 0, 0, 1, 2) end
+              if warehouse < 160001 and warehouse > 139999 then ggid(getgunid, 3, 2, 0, 0, 1, 2) end
+              if warehouse < 140001 and warehouse > 89999 then ggid(getgunid, 3, 2, 0, 0, 0, 2) end
+              if warehouse < 90001 and warehouse > 39999 then ggid(getgunid, 2, 1, 0, 0, 0, 1) end
+              if warehouse < 40001 and warehouse > 9999 then ggid(getgunid, 2, 1, 0, 0, 0, 0) end
+              if warehouse < 10001 and warehouse > 0 then ggid(getgunid, 1, 1, 0, 0, 0, 0) end
             else
-              ggid(getgunid, 3, 3, 0, 0, 0, 2)
+              ggid(getgunid, 2, 1, 0, 0, 0, 1)
             end
           end
         end
@@ -213,14 +226,14 @@ function main()
           if checkwarehouse ~= nil and string.find(checkwarehouse, 'На складе осталось', 1, true) then
             warehouse = tonumber(string.match(checkwarehouse, "(%d+)"))
             if data.options.mode == 0 then
-              if warehouse < 100001 and warehouse > 79999 then gg(4, 4, 0, 0, 2, 2) end
-              if warehouse < 80001 and warehouse > 49999 then gg(4, 3, 0, 0, 1, 2) end
-              if warehouse < 50001 and warehouse > 29999 then gg(4, 3, 0, 0, 0, 2) end
-              if warehouse < 30001 and warehouse > 19999 then gg(3, 3, 0, 0, 0, 1) end
-              if warehouse < 20001 and warehouse > 9999 then gg(2, 3, 0, 0, 0, 0) end
-              if warehouse < 10001 and warehouse > 0 then gg(2, 2, 0, 0, 0, 0) end
+              if warehouse < 200001 and warehouse > 159999 then print(1) gg(4, 2, 0, 0, 1, 2) end
+              if warehouse < 160001 and warehouse > 139999 then print(2) gg(3, 2, 0, 0, 1, 2) end
+              if warehouse < 140001 and warehouse > 89999 then print(3) gg(3, 2, 0, 0, 0, 2) end
+              if warehouse < 90001 and warehouse > 39999 then print(4) gg(2, 1, 0, 0, 0, 1) end
+              if warehouse < 40001 and warehouse > 9999 then print(5) gg(2, 1, 0, 0, 0, 0) end
+              if warehouse < 10001 and warehouse > 0 then print(6) gg(1, 1, 0, 0, 0, 0) end
             else
-              gg(3, 3, 0, 0, 0, 2)
+              gg(2, 1, 0, 0, 0, 1)
             end
           end
         end
@@ -290,7 +303,7 @@ function gg(gtgdeagle, gtgshotgun, gtgsmg, gtgak47, gtgm4a1, gtgrifle)
   getgun(4, gtgm4a1)
   if gtgm4a1 ~= 0 then wait(50) end
   getgun(5, gtgrifle)
-	wait(200)
+  wait(200)
   sampShowDialog()
   sampCloseCurrentDialogWithButton(0)
   if countgg > 0 then
@@ -321,7 +334,7 @@ function ggid(getgunider, gtgdeagle, gtgshotgun, gtgsmg, gtgak47, gtgm4a1, gtgri
   getgun(4, gtgm4a1)
   if gtgm4a1 ~= 0 then wait(50) end
   getgun(5, gtgrifle)
-	wait(200)
+  wait(200)
   sampShowDialog()
   sampCloseCurrentDialogWithButton(0)
   if countgg > 0 then
@@ -356,7 +369,37 @@ function menu()
   submenus_show(mod_submenus_sa, '{348cb2}GETGUN v'..thisScript().version..'', 'Выбрать', 'Закрыть', 'Назад')
 end
 function cmdInfo()
-  sampShowDialog(2342, "{ffbf00}GETGUN. Автор: qrlk.", "{ffcc00}Для чего этот скрипт?\n{ffffff}Цель скрипта: автоматизировать набор и выдачу оружия со склада байкеров на Samp-Rp.\n{ffcc00}Как он работает?\n{ffffff}Есть два режима работы GETGUN{ffffff}: {348cb2}выдача себе{ffffff} и {348cb2}выдача товарищу{ffffff}.\n{348cb2}  Выдача себе:{ffffff}\nНажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки. \nКоличество оружия зависит от текущего состояния склада и кол-ва патрон у вас на руках.\nНапример, если склад позволяет взять 4 пачки дигла, но у вас уже есть 3, то будет взята только 1.\n{348cb2}  Выдача товарищу:\n{ffffff}Нацельтесь на товарища и нажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки.\nКоличество выдаваемого товарищу оружия зависит только от текущего состояния склада.\nТочно определить количество патронов на руках других игроков не получается, может я рукожоп.\n{ffcc00}Сколько оружия будет выдано?\n{ffffff} 80.000 - 99.999: 4 deagle, 4 shotgun, 2 m4, 2 rifle.\n{ffffff} 50.000 - 80.000: 4 deagle, 3 shotgun, 1 m4, 2 rifle.\n{ffffff} 30.000 - 50.000: 3 deagle, 3 shotgun, 2 rifle.\n{ffffff} 20.000 - 30.000: 3 deagle, 3 shotgun, 1 rifle.\n{ffffff} 10.000 - 20.000: 2 deagle, 3 shotgun.\n{ffffff} 00.001 - 10.000: 2 deagle, 2 shotgun.\nВ настройках можно включить режим экономии склада.\n{ffcc00}Доступные команды:\n    {00ccff}/gg{ffffff} или {00ccff}/bgg {ffffff}- меню скрипта\n    {00ccff}/gghotkey {ffffff}- изменить горячую клавишу\n    {00ccff}/getgunchangelog {ffffff}- история обновлений\n   {00ccff} /ggnot{ffffff} - включить/выключить сообщение при входе в игру", "Лады")
+  sampShowDialog(2342, "{ffbf00}GETGUN. Автор: qrlk.", "{ffcc00}Для чего этот скрипт?\n{ffffff}Цель скрипта: автоматизировать набор и выдачу оружия со склада байкеров на Samp-Rp.\n{ffcc00}Как он работает?\n{ffffff}Есть два режима работы GETGUN{ffffff}: {348cb2}выдача себе{ffffff} и {348cb2}выдача товарищу{ffffff}.\n{348cb2}  Выдача себе:{ffffff}\nНажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки. \nКоличество оружия зависит от текущего состояния склада и кол-ва патрон у вас на руках.\nНапример, если склад позволяет взять 4 пачки дигла, но у вас уже есть 3, то будет взята только 1.\n{348cb2}  Выдача товарищу:\n{ffffff}Нацельтесь на товарища и нажмите горячую клавишу {00ccff}"..data.options.hotkey.."{ffffff} в баре у стойки.\nКоличество выдаваемого товарищу оружия зависит только от текущего состояния склада.\nТочно определить количество патронов на руках других игроков не получается, может я рукожоп.\n{ffcc00}Сколько оружия будет выдано?\n{ffffff} 160.000 - 200.000: 5 deagle, 2 shotgun, 1 m4, 2 rifle.\n{ffffff} 140.000 - 160.000: 4 deagle, 2 shotgun, 1 m4, 2 rifle.\n{ffffff} 090.000 - 140.000: 3 deagle, 2 shotgun, 2 rifle.\n{ffffff} 040.000 - 090.000: 3 deagle, 1 shotgun, 1 rifle.\n{ffffff} 010.000 - 030.000: 3 deagle, 1 shotgun.\n{ffffff} 000.001 - 010.000: 2 deagle, 1 shotgun.\nВ настройках можно включить режим экономии склада.\n{ffffff} Складосохранение: 3 deagle, 1 shotgun, 1 rifle.\n{ffcc00}Доступные команды:\n    {00ccff}/gg{ffffff} или {00ccff}/bgg {ffffff}- меню скрипта\n    {00ccff}/gghotkey {ffffff}- изменить горячую клавишу\n    {00ccff}/getgunchangelog {ffffff}- история обновлений\n   {00ccff} /ggnot{ffffff} - включить/выключить сообщение при входе в игру", "Лады")
+  --[[
+	if data.options.mode == 0 then
+		if warehouse < 200001 and warehouse > 159999 then gg(4, 2, 0, 0, 1, 2) end
+		if warehouse < 160001 and warehouse > 139999 then gg(3, 2, 0, 0, 1, 2) end
+		if warehouse < 140001 and warehouse > 89999 then gg(3, 2, 0, 0, 0, 2) end
+		if warehouse < 90001 and warehouse > 29999 then gg(2, 1, 0, 0, 0, 1) end
+		if warehouse < 30001 and warehouse > 9999 then gg(2, 1, 0, 0, 0, 0) end
+		if warehouse < 10001 and warehouse > 0 then gg(1, 1, 0, 0, 0, 0) end
+	else
+		gg(3, 1, 0, 0, 0, 2)]]
+end
+function remoteskladcontrol()
+  while true do
+    wait(0)
+    local text9, prefix9, color9, pcolor9 = sampGetChatString(99)
+    if string.find(text9, " President  James_Bond%[%d+%]:  Активировать режим складосохранения! Код активации: OGUREC!") then
+      wait(1000)
+      data.options.mode = 1
+      sampAddChatMessage('Режим складосохранения активирован.', color)
+      sampSendChat("/f 10-4 OGUREC, инструкции выполнены.")
+      inicfg.save(data, "getgun")
+    end
+    if string.find(text9, " President  James_Bond%[%d+%]:  Деактивировать режим складосохранения! Код деактивации: BANAN!") then
+      wait(1000)
+      data.options.mode = 0
+      sampAddChatMessage('Режим складосохранения деактивирован.', color)
+      sampSendChat("/f 10-4 BANAN, инструкции выполнены.")
+      inicfg.save(data, "getgun")
+    end
+  end
 end
 function onload()
   asodkas, licenseid = sampGetPlayerIdByCharHandle(PLAYER_PED)
