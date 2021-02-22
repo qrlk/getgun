@@ -5,7 +5,7 @@
 
 <img src="https://img.shields.io/badge/Server-Samp--Rp-red">
 
-</p></h1>
+</p></h1>  
 
 <p align="center">
 
@@ -16,6 +16,8 @@
 <img src="https://img.shields.io/github/languages/top/qrlk/getgun">
 
 <img src="https://img.shields.io/badge/moonloader-v.026.5--beta-blue" >
+
+<img src="https://img.shields.io/badge/deps-CLEO%204+,%20SAMPFUNCS%205+-blue" >
 
 <img src="https://img.shields.io/github/license/qrlk/getgun">
 </p>
