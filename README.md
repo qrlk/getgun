@@ -4,7 +4,7 @@
 
 <img src="https://img.shields.io/badge/made%20for-GTA%20SA--MP-blue" >
 
-<img src="https://img.shields.io/badge/Server-Any-red">
+<img src="https://img.shields.io/badge/Server-Samp--Rp-red">
 
 <img src="https://img.shields.io/github/languages/top/qrlk/getgun">
 
