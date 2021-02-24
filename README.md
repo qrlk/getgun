@@ -12,7 +12,7 @@
 
 <img src="https://img.shields.io/badge/dynamic/json?color=blueviolet&label=users%20%28all%20time%29&query=result&url=http%3A%2F%2Fqrlk.me%2Fdev%2Fmoonloader%2Fusers_all.php%3Fscript%3Dgetgun">
 
-<img src="https://img.shields.io/badge/moonloader-v.026.5--beta-blue" >
+<img src="https://img.shields.io/date/1509570000?label=released" >
 
 </p>
 
@@ -35,15 +35,15 @@ It also requires **[CLEO 4+](http://cleo.li/?lang=ru)** and **[SAMPFUNCS 5+](htt
 
 * /gg - открыть диалог скрипта.
 
-# Ссылки
-* **Автор:** [qrlk](https://qrlk.me/).  
-* **Тема на BlastHack:** [ссылка](https://www.blast.hk/threads/19485/).
-* **Страница в группе VK:** [ссылка](https://vk.com/qrlk.mods?w=page-168860334_54271622).
-* **Список скриптов QRLK MODS:** [ссылка](https://vk.com/qrlk.mods?w=page-168860334_54271482).
-
-P.S. Группа VK не обновляется.
-
 # Скриншоты
 ![https://i.imgur.com/diFVl3o.png](https://i.imgur.com/diFVl3o.png)  
 ![https://i.imgur.com/D5cES3h.png](https://i.imgur.com/D5cES3h.png)  
 ![https://i.imgur.com/0I4Vjvk.jpg?1](https://i.imgur.com/0I4Vjvk.jpg?1)
+
+## Ссылки
+* [Автор](http://qrlk.me/)
+* [Тема на BlastHack](https://www.blast.hk/threads/19485/)
+* [Страница в группе VK](https://vk.com/qrlk.mods?w=page-168860334_54271622)
+* [Список скриптов QRLK MODS](https://vk.com/qrlk.mods?w=page-168860334_54271482)
+
+P.S. Группа VK не обновляется.
