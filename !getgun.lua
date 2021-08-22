@@ -16,7 +16,6 @@ local data = inicfg.load({
     startmessage = 1,
     hotkey = 'N',
     mode = 0,
-    showad = true,
     autoupdate = 1,
     doklad = 1,
   },
@@ -145,14 +144,7 @@ function main()
     sampAddChatMessage(('Подробнее - /gg или /bgg. Отключить это сообщение - /ggnot'), 0x348cb2)
   end
   lua_thread.create(remoteskladcontrol)
-  if data.options.showad == true then
-    sampAddChatMessage("[GETGUN]: Внимание! У нас появилась группа ВКонтакте: vk.com/qrlk.mods", - 1)
-    sampAddChatMessage("[GETGUN]: Подписавшись на неё, вы сможете получать новости об обновлениях,", - 1)
-    sampAddChatMessage("[GETGUN]: новых скриптах, а так же учавствовать в розыгрышах платных скриптов!", - 1)
-    sampAddChatMessage("[GETGUN]: Это сообщение показывается один раз для каждого скрипта. Спасибо за внимание.", - 1)
-    data.options.showad = false
-    inicfg.save(data, "getgun")
-  end
+
   while true do
     if menutrigger ~= nil then menu() menutrigger = nil end
     wait(0)
