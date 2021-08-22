@@ -6,6 +6,7 @@ script_name("GETGUN")
 script_description("/gg")
 script_author("qrlk")
 script_version("24.07.2019")
+script_url("https://github.com/qrlk/getgun")
 --------------------------------------VAR---------------------------------------
 color = 0x348cb2
 local prefix = '['..string.upper(thisScript().name)..']: '
