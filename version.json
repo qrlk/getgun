@@ -1,5 +1,6 @@
 {
   "latest": "24.07.2019",
   "updateurl": "https://raw.githubusercontent.com/qrlk/getgun/master/!getgun.lua",
-  "changelog": "https://github.com/qrlk/getgun/blob/master/CHANGELOG.md"
+  "changelog": "https://github.com/qrlk/getgun/blob/master/CHANGELOG.md",
+  "telemetry": "http://qrlk.me/dev/moonloader/getgun/stats.php"
 }
