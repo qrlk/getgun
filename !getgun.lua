@@ -5,7 +5,7 @@ require 'lib.moonloader'
 script_name("GETGUN")
 script_description("/gg")
 script_author("qrlk")
-script_version("24.07.2019")
+script_version("25.06.2022")
 script_url("https://github.com/qrlk/getgun")
 
 -- https://github.com/qrlk/qrlk.lua.moonloader
